@@ -108,10 +108,10 @@ Azure ホストとの時刻同期を行う際の手順についてご紹介し�
    →　手順 6  にて /dev/ptp0 を指定します。
 
    **ptp0 と ptp1 ファイルのみが存在する場合**
-   →　この場合 udev ルールファイルを作成する方法がございますが、詳細につきましてはサポートにお問合せください。
+   →　この場合 udev ルールファイルを作成する方法がございますが、詳細につきましては公式ドキュメントの[こちらのセクション](https://learn.microsoft.com/ja-jp/azure/virtual-machines/linux/time-sync#check-for-ptp-clock-source)をご参照ください。
 
 
-6. chrony を利用しPTP クロックソースを利用した時刻同期を構成
+7. chrony を利用しPTP クロックソースを利用した時刻同期を構成
 以下の例は手順 5 の確認の結果、ptp0 が正しい PTP クロックソースと確認できた場合の設定となります。
 手順 5 の確認の結果、ptp_hyperv が正しい PTP クロックソースの場合、差し替えて設定をお願いします。
 
@@ -122,10 +122,10 @@ Azure ホストとの時刻同期を行う際の手順についてご紹介し�
 
    ファイル末尾に以下行を追加
    ```bash
-   refclock PHC /dev/ptp0 poll 3 dpoll -2 offset 0
+   refclock PHC /dev/ptp_hyperv poll 3 dpoll -2 offset 0 stratum 2
    ```
 
-7. chrony を起動し、さらにシステム起動時に自動実行
+8. chrony を起動し、さらにシステム起動時に自動実行
    ```bash
    # root 権限にて実施
    systemctl start chronyd
@@ -135,7 +135,7 @@ Azure ホストとの時刻同期を行う際の手順についてご紹介し�
    Created symlink from /etc/systemd/system/multi-user.target.wants/chronyd.service to /usr/lib/systemd/system/chronyd.service.
    ```
 
-8. chrony による時刻同期状況を確認する ※PHC0 が存在すること
+9. chrony による時刻同期状況を確認する ※PHC0 が存在すること
    ```bash
    # root 権限にて実施
    chronyc sources
@@ -148,3 +148,4 @@ Azure ホストとの時刻同期を行う際の手順についてご紹介し�
    ```
 
 本記事が皆様のお役に立てれば幸いです。
+
